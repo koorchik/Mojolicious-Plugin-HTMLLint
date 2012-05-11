@@ -7,27 +7,28 @@ our $VERSION = '0.01';
 
 sub register {
     my ( $self, $app ) = @_;
+    
     my $lint = HTML::Lint->new;
-    my $log_cb = sub { $app->log->warn("HTMLLint: $_[0]"); };
-
+    my $log = $app->log;
+    
     $app->hook(
         'after_dispatch' => sub {
             my ( $c ) = @_;
             my $res = $c->res;
-            ## - only successful response
+
+            # Only successful response
             return if $res->code !~ m/^2/;
  
-            ## - only html response
+            ## Only html response
             return unless $res->headers->content_type;
-            return if $res->headers->content_type !~ /^text\/html/;
+            return if $res->headers->content_type !~ /html/;
             
             $lint->parse($res->body);
 
             foreach my $error ( $lint->errors ) {
-                $log_cb->( $error->as_string );
+                $log->warn("HTMLLint: " . $error->as_string );
             }            
         } );
-
 }
 
 1;
