@@ -6,9 +6,12 @@ use HTML::Lint;
 our $VERSION = '0.01';
 
 sub register {
-    my ( $self, $app ) = @_;
+    my ( $self, $app, $conf ) = @_;
+    $conf ||= {};
     
-    my $lint = HTML::Lint->new;
+    my $skip = delete $conf->{skip} // [];
+    
+    my $lint = HTML::Lint->new(%$conf);
     my $log = $app->log;
     
     $app->hook(
@@ -26,6 +29,8 @@ sub register {
             $lint->parse($res->body);
 
             foreach my $error ( $lint->errors ) {
+                my $err_msg = $error->as_string();
+                next if $err_msg ~~ $skip;
                 $log->warn("HTMLLint: " . $error->as_string );
             }            
         } );
@@ -41,23 +46,25 @@ Mojolicious::Plugin::HTMLLint - Mojolicious Plugin
 =head1 SYNOPSIS
 
   # Mojolicious
-  $self->plugin('HTMLLint');
+  $self->plugin('HTMLLint', \%conf);
 
   # Mojolicious::Lite
   plugin 'HTMLLint';
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::HTMLLint> is a L<Mojolicious> plugin.
+L<Mojolicious::Plugin::HTMLLint> - L<HTML::Lint> support fot L<Mojolicious>.
 
-=head1 METHODS
+=head1 CONFIG
 
-L<Mojolicious::Plugin::HTMLLint> inherits all methods from
-L<Mojolicious::Plugin> and implements the following new ones.
+Config will be passed to HTML::Lint->new();  
+For support options see L<HTML::Lint>
 
-=head2 C<register>
+=head2 C<skip> 
 
-  $plugin->register;
+  $app->plugin('HTMLLint', { skip => [ qr//, qr// ]} );
+
+This options says what message not to show.   
 
 Register plugin in L<Mojolicious> application.
 
