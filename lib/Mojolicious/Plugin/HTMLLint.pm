@@ -71,6 +71,10 @@ This options says what message not to show.
 
 Register plugin in L<Mojolicious> application.
 
+=head1 TODO
+
+Add tests
+
 =head1 AUTHOR
 
 Viktor Turskyi <koorchik@cpan.org>
