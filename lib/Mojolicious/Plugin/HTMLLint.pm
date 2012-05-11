@@ -41,19 +41,22 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::HTMLLint - Mojolicious Plugin
+Mojolicious::Plugin::HTMLLint - HTML::Lint support for Mojolicious
 
 =head1 SYNOPSIS
 
   # Mojolicious
-  $self->plugin('HTMLLint', \%conf);
+  $self->plugin('HTMLLint');
+  
+  # Mojolicious (skip errors that contain "placeholder" string)
+  $self->plugin( 'HTMLLint', { skip => [ qr/placeholder/ ] } ); 
 
   # Mojolicious::Lite
   plugin 'HTMLLint';
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::HTMLLint> - L<HTML::Lint> support fot L<Mojolicious>.
+L<Mojolicious::Plugin::HTMLLint> - allows you to validate HTML rendered by your application. The plugin uses HTML::Lint for validation. Errors will appear in Mojolicious log. 
 
 =head1 CONFIG
 
@@ -68,8 +71,16 @@ This options says what message not to show.
 
 Register plugin in L<Mojolicious> application.
 
+=head1 AUTHOR
+
+Viktor Turskyi <koorchik@cpan.org>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to Github L<https://github.com/koorchik/Mojolicious-Plugin-HTMLLint>
+
 =head1 SEE ALSO
 
-L<Mojolicious>, L<Mojolicious::Guides>, L<http://mojolicio.us>.
+L<Mojolicious>, L<HTML::Lint>, L<HTML::Tidy>  
 
 =cut
