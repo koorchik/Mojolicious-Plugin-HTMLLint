@@ -5,3 +5,5 @@ Revision history for Mojolicious::Plugin::ValidateTiny
 
 0.02
         Added "skip" config option        
+0.03 
+        Better docs
