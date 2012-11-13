@@ -3,17 +3,24 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use HTML::Lint;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
     $conf ||= {};
     
     my $skip = delete $conf->{skip} // [];
+
+    # On error callback
+    my $on_error;
+    if ( $conf->{on_error} && ref($conf->{on_error}) eq 'CODE' ) {
+        $on_error = delete $conf->{on_error};
+    } else {
+        $on_error = sub { $app->log->warn($_[1]) };
+    }
+
     
-    my $lint = HTML::Lint->new(%$conf);
-    my $log = $app->log;
-    
+   
     $app->hook(
         'after_dispatch' => sub {
             my ( $c ) = @_;
@@ -26,12 +33,14 @@ sub register {
             return unless $res->headers->content_type;
             return if $res->headers->content_type !~ /html/;
             
+            my $lint = HTML::Lint->new(%$conf);
             $lint->parse($res->body);
-
+            
             foreach my $error ( $lint->errors ) {
                 my $err_msg = $error->as_string();
                 next if $err_msg ~~ $skip;
-                $log->warn("HTMLLint: " . $error->as_string );
+
+                $on_error->( $c, "HTMLLint:" . $error->as_string );
             }            
         } );
 }
@@ -64,19 +73,24 @@ L<Mojolicious::Plugin::HTMLLint> - allows you to validate HTML rendered by your 
 =head1 CONFIG
 
 Config will be passed to HTML::Lint->new();  
-For support options see L<HTML::Lint>
+For supported options see L<HTML::Lint>
 
 =head2 C<skip> 
 
   $app->plugin('HTMLLint', { skip => [ qr//, qr// ]} );
 
-This options says what message not to show.   
+This options says what message not to show.   This option plugin processes by its own(without passing to HTML::Lint).
 
-Register plugin in L<Mojolicious> application.
+=head2 C<on_error> 
 
-=head1 TODO
+You can pass custom error handling callback. For example
 
-Add tests
+    $self->plugin('HTMLLint', on_error => sub {
+        my ($c, $mes) = @_;
+        $c->render_text($mes);
+    });
+
+This option plugin processes by its own(without passing to HTML::Lint).
 
 =head1 AUTHOR
 

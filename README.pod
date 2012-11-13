@@ -23,19 +23,24 @@ L<Mojolicious::Plugin::HTMLLint> - allows you to validate HTML rendered by your 
 =head1 CONFIG
 
 Config will be passed to HTML::Lint->new();  
-For support options see L<HTML::Lint>
+For supported options see L<HTML::Lint>
 
 =head2 C<skip> 
 
   $app->plugin('HTMLLint', { skip => [ qr//, qr// ]} );
 
-This options says what message not to show.   
+This options says what message not to show.   This option plugin processes by its own(without passing to HTML::Lint).
 
-Register plugin in L<Mojolicious> application.
+=head2 C<on_error> 
 
-=head1 TODO
+You can pass custom error handling callback. For example
 
-Add tests
+    $self->plugin('HTMLLint', on_error => sub {
+        my ($c, $mes) = @_;
+        $c->render_text($mes);
+    });
+
+This option plugin processes by its own(without passing to HTML::Lint).
 
 =head1 AUTHOR
 
