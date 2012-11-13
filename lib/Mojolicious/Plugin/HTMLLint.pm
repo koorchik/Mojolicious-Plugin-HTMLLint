@@ -18,8 +18,6 @@ sub register {
     } else {
         $on_error = sub { $app->log->warn($_[1]) };
     }
-
-    
    
     $app->hook(
         'after_dispatch' => sub {
