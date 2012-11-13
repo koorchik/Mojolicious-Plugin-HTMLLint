@@ -1,6 +1,6 @@
 use Mojo::Base -strict;
 
-use Test::More tests => 3;
+use Test::More;
 
 use Mojolicious::Lite;
 use Test::Mojo;
@@ -28,6 +28,8 @@ ok( $error_string =~ /Unknown attribute "wrongatttr"/, 'should be error about un
 $error_string = '';
 $t->get_ok('/never_closed_div')->status_is(200)->content_like(qr{<div>test<div>});
 ok( $error_string =~ /div.+is never closed/, 'should be error about never closed div') ;
+
+done_testing;
 
 __DATA__;
 
