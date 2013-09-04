@@ -11,6 +11,11 @@ WriteMakefile(
         'Mojolicious' => '2.88',
         'HTML::Lint'  => 0
     },
+    META_MERGE   => {
+        resources => {
+            repository => 'https://github.com/koorchik/Mojolicious-Plugin-HTMLLint',
+        },
+    },
     test => { TESTS => 't/*.t' },
     dist      => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', }
 );
