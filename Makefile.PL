@@ -9,7 +9,7 @@ WriteMakefile(
     AUTHOR       => 'Viktor Turskyi <koorchik@cpan.org>',
     PREREQ_PM    => {
         'Mojolicious' => '2.88',
-        'HTML::Lint'  => 0
+        'HTML::Lint'  => '2.26'
     },
     META_MERGE   => {
         resources => {

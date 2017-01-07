@@ -3,12 +3,15 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use HTML::Lint;
 
-our $VERSION = '0.04';
+use v5.10; # earliest occurance of feature
+no warnings 'experimental::smartmatch';
+
+our $VERSION = '0.05';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
     $conf ||= {};
-    
+
     my $skip = delete $conf->{skip} // [];
 
     # On error callback
@@ -18,7 +21,7 @@ sub register {
     } else {
         $on_error = sub { $app->log->warn($_[1]) };
     }
-   
+
     $app->hook(
         'after_dispatch' => sub {
             my ( $c ) = @_;
@@ -26,20 +29,21 @@ sub register {
 
             # Only successful response
             return if $res->code !~ m/^2/;
- 
+
             ## Only html response
             return unless $res->headers->content_type;
             return if $res->headers->content_type !~ /html/;
-            
+
             my $lint = HTML::Lint->new(%$conf);
             $lint->parse($res->body);
-            
+            $lint->eof();
+
             foreach my $error ( $lint->errors ) {
                 my $err_msg = $error->as_string();
                 next if $err_msg ~~ $skip;
 
                 $on_error->( $c, "HTMLLint:" . $error->as_string );
-            }            
+            }
         } );
 }
 
@@ -54,32 +58,32 @@ Mojolicious::Plugin::HTMLLint - HTML::Lint support for Mojolicious
 
   # Mojolicious
   $self->plugin('HTMLLint');
-  
-  # In development mode only 
-  $self->plugin('HTMLLint') if $self->mode eq 'development'; 
-  
+
+  # In development mode only
+  $self->plugin('HTMLLint') if $self->mode eq 'development';
+
   # Mojolicious (skip errors that contain "placeholder" string)
-  $self->plugin( 'HTMLLint', { skip => [ qr/placeholder/ ] } ); 
+  $self->plugin( 'HTMLLint', { skip => [ qr/placeholder/ ] } );
 
   # Mojolicious::Lite
   plugin 'HTMLLint';
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::HTMLLint> - allows you to validate HTML rendered by your application. The plugin uses HTML::Lint for validation. Errors will appear in Mojolicious log. 
+L<Mojolicious::Plugin::HTMLLint> - allows you to validate HTML rendered by your application. The plugin uses HTML::Lint for validation. Errors will appear in Mojolicious log.
 
 =head1 CONFIG
 
-Config will be passed to HTML::Lint->new();  
+Config will be passed to HTML::Lint->new();
 For supported options see L<HTML::Lint>
 
-=head2 C<skip> 
+=head2 C<skip>
 
   $app->plugin('HTMLLint', { skip => [ qr//, qr// ]} );
 
 This options says what message not to show.   This option plugin processes by its own(without passing to HTML::Lint).
 
-=head2 C<on_error> 
+=head2 C<on_error>
 
 You can pass custom error handling callback. For example
 
@@ -100,6 +104,6 @@ Please report any bugs or feature requests to Github L<https://github.com/koorch
 
 =head1 SEE ALSO
 
-L<Mojolicious>, L<HTML::Lint>, L<HTML::Tidy>  
+L<Mojolicious>, L<HTML::Lint>, L<HTML::Tidy>
 
 =cut
