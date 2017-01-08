@@ -20,4 +20,5 @@ WriteMakefile(
     dist      => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     MIN_PERL_VERSION => v5.10,
     LICENSE => 'perl_5',
+    clean => { FILES => 'Mojolicious-Plugin-HTMLLint-*' },
 );
