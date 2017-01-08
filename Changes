@@ -17,3 +17,6 @@ Revision history for Mojolicious::Plugin::ValidateTiny
         Upgrade to HTML::Lint 2.26
         Disable smartmatch warning
         Split tests into subtests
+
+0.06
+        Fi experimental smartmatch warning

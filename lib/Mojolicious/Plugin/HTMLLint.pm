@@ -4,9 +4,9 @@ use Mojo::Base 'Mojolicious::Plugin';
 use HTML::Lint;
 
 use v5.10; # earliest occurance of feature
-no warnings 'experimental::smartmatch';
+no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
