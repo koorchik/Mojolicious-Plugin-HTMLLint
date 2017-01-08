@@ -19,4 +19,5 @@ WriteMakefile(
     test => { TESTS => 't/*.t' },
     dist      => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     MIN_PERL_VERSION => v5.10,
+    LICENSE => 'perl_5',
 );

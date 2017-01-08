@@ -106,4 +106,8 @@ Please report any bugs or feature requests to Github L<https://github.com/koorch
 
 L<Mojolicious>, L<HTML::Lint>, L<HTML::Tidy>
 
+=head1 LICENSE
+
+Same as Perl 5.
+
 =cut
